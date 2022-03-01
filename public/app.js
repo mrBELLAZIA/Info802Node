@@ -2,6 +2,7 @@ var socket = io();
 var liste = [];
 var index = 0;
 var waypoints = [];
+var map;
 
 var options = {
     types: ['(cities)'],
@@ -36,14 +37,6 @@ function afficheStat(elem) {
     document.getElementById('stats').innerHTML =
         "Kilometres d'autonomie : "+liste[elem.selectedIndex]['autonomie'] +"</br>" +
         "Temps de recharge : "+liste[elem.selectedIndex]['temps'];
-}
-
-function afficheStat(lat,lng){
-    socket.emit('trajet',lastPoint[1],lastPoint[0],10000);
-    socket.on('dist',function (body){
-        waypoints.push(body);
-    })
-    document.getElementById("infoBorne").innerText = "";
 }
 
 
@@ -150,7 +143,6 @@ function calcRoute() {
                     dist += tab[i]["distance"]
                     lastPoint = tab[i]
                     i+=1
-                    console.log(tab[i]["distance"])
                 }
 
                 socket.emit('trajet',lastPoint[1],lastPoint[0],10000);
@@ -158,8 +150,35 @@ function calcRoute() {
                     waypoints.push(body);
                 })
             }
-            console.log(waypoints,i,waypoints.length)
         }
         }
     )
+}
+
+function afficheBornes(lat,lng){
+    socket.emit('trajet',lat,lng,100000);
+    socket.on('dist',function (body){
+        var borne = JSON.parse(body)[0]
+        var txtHtml = "";
+        for (let i = 0; i < borne.length; i++){
+            txtHtml +=
+                "<p> Adresse : "+borne[i].fields.ad_station+" <br/>" +
+                "Payant : "+borne[i].fields.acces_recharge + "<br/>" +
+                "Latitude : "+ borne[i].fields.ylatitude + "<br/>" +
+                "Longitude : "+borne[i].fields.xlongitude + "<br/>" +
+                "Distance :"+borne[i].fields.dist +"</p>";
+
+            marker = new google.maps.Marker({
+                    position:{
+                        lat : borne[i].fields.ylatitude,
+                        lng : borne[i].fields.xlongitude
+                    }
+                }
+            )
+            marker.setMap(map);
+
+        }
+        document.getElementById("infoBorne").innerHTML = txtHtml;
+
+    })
 }
