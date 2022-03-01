@@ -1,4 +1,5 @@
 {
+  "main": "server.js",
   "dependencies": {
     "express": "^4.17.3",
     "material-design-icons": "^3.0.1",
@@ -6,5 +7,8 @@
     "request": "^2.88.2",
     "soap": "^0.43.0",
     "socketio": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
