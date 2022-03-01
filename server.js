@@ -18,6 +18,7 @@ http.listen(3000, function(){
 
 
 var soap = require('soap');
+const {json} = require("express");
 var url = 'http://127.0.0.1:8000/wsdl?wsdl';
 
 soap.createClient(url, function(err, client) {
@@ -35,8 +36,8 @@ io.on('connect',function(socket){
         })
 
         socket.on('trajet',function (lat,lng,limite){
-            request("http://127.0.0.1:5000/findWaysPoints/"+lat+"/"+lng+"/"+limite,function (error,response){
-                io.emit(json.parse(response));
+            request("http://127.0.0.1:5000/findWaysPoints/"+lat+"/"+lng+"/"+limite,function (error,response,body){
+                io.emit('dist',body);
                 //console.log(json.parse(response));
             })
         })

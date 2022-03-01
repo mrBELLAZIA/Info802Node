@@ -1,6 +1,8 @@
 var socket = io();
 var liste = [];
-var index;
+var index = 0;
+var disttt;
+var waypoints = [];
 
 var options = {
     types: ['(cities)'],
@@ -32,7 +34,6 @@ function afficheListe() {
 
 function afficheStat(elem) {
     index = elem.selectedIndex
-    console.log(elem.selectedIndex);
     document.getElementById('stats').innerHTML =
         "Kilometres d'autonomie : "+liste[elem.selectedIndex]['autonomie'] +"</br>" +
         "Temps de recharge : "+liste[elem.selectedIndex]['temps'];
@@ -110,7 +111,6 @@ function calcRoute() {
     directionsServices.route(request,(result,status) => {
             if (status == google.maps.DirectionsStatus.OK) {
 
-                //console.log(result.routes[0].legs[0].steps);
                 // get Distance & Time
 
                 const output = document.querySelector('#output');
@@ -129,12 +129,9 @@ function calcRoute() {
             var tab = [];
             var coord = [];
             for (var i = 0; i < response.routes[0].legs[0].steps.length; i++) {
-                coord.push(response.routes[0].legs[0].steps[i].end_location.toUrlValue(6))
-                tab.push(coord);
-                coord = [];
+                tab.push(response.routes[0].legs[0].steps[i].end_location.toUrlValue(6).split(','));
             }
             ;
-            console.log(tab);
 
             res = []
             lastPoint = tab[0]
@@ -142,14 +139,19 @@ function calcRoute() {
             dist = 0
             while (lastPoint != tab[tab.length-1]){
                 dist = 0
-                while ((dist < 'trajet',liste[index]['autonomie'] - 10) && i < tab.length) {
+                while (dist <(liste[index]['autonomie'] - 10) && i < tab.length) {
                     dist += tab[i]["distance"]
                     lastPoint = tab[i]
                     i+=1
+                    console.log(tab[i]["distance"])
                 }
-            console.log(socket.emit('trajet',lastPoint[1],lastPoint[0],10000))
+
+                socket.emit('trajet',lastPoint[1],lastPoint[0],10000);
+                socket.on('dist',function (body){
+                    waypoints.push(body);
+                })
             }
-            console.log(i)
+            console.log(waypoints,i,waypoints.length)
         }
         }
     )
