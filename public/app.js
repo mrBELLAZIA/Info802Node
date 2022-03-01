@@ -1,7 +1,6 @@
 var socket = io();
 var liste = [];
 var index = 0;
-var disttt;
 var waypoints = [];
 
 var options = {
@@ -37,6 +36,14 @@ function afficheStat(elem) {
     document.getElementById('stats').innerHTML =
         "Kilometres d'autonomie : "+liste[elem.selectedIndex]['autonomie'] +"</br>" +
         "Temps de recharge : "+liste[elem.selectedIndex]['temps'];
+}
+
+function afficheStat(lat,lng){
+    socket.emit('trajet',lastPoint[1],lastPoint[0],10000);
+    socket.on('dist',function (body){
+        waypoints.push(body);
+    })
+    document.getElementById("infoBorne").innerText = "";
 }
 
 
