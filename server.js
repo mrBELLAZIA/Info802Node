@@ -20,7 +20,7 @@ http.listen(port, function(){
 
 var soap = require('soap');
 const {json} = require("express");
-var url = 'http://127.0.0.1:8000/wsdl?wsdl';
+var url = 'https://servsoapinfo802.herokuapp.com/?wsdl';
 
 soap.createClient(url, function(err, client) {
     client.recupListVoiture(function(err, result) {
