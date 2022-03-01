@@ -37,7 +37,7 @@ io.on('connect',function(socket){
         })
 
         socket.on('trajet',function (lat,lng,limite){
-            request("http://127.0.0.1:5000/findWaysPoints/"+lat+"/"+lng+"/"+limite,function (error,response,body){
+            request( "https://carapiinfo802.herokuapp.com/findWaysPoints?lat="+lat+"&lng="+lng+"&limite="+limite,function (error,response,body){
                 io.emit('dist',body);
                 //console.log(json.parse(response));
             })
